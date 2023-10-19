@@ -3,18 +3,216 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_DATABASE")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Guild {
-  id      String   @id @map("_id")
-  captcha Captcha?
+
+model DiscordUser {
+  id        Int       @id @default(autoincrement())
+  discordId String?   @unique
+  username  String?
+  pfp       String?
+  createdAt DateTime? @default(now())
+  premium   Boolean?  @default(false)
+  UniqueID  String?  @unique @default(uuid())
+  links     Int[]
+}
+model Links {
+  id                     Int       @id @default(autoincrement())
+  url                    String?
+  shortUrl               String?   @unique
+  clicks                 Int?      @default(0)
+  MobileViews            Int?      @default(0)
+  DesktopViews           Int?      @default(0)
+  domain                 String?   @default("lto.lol")
+  password               String?
+  createdAt              DateTime? @default(now())
+  expiresAt              DateTime?
+  PublicAt               DateTime? @default(now())
+  Theme                  String?   @default("purple-dark")
+  IosRedirectEnabled     Boolean?  @default(false)
+  AndroidRedirectEnabled Boolean?  @default(false)
+  IosRedirect            String?
+  AndroidRedirect        String?
+  BlockedIps             String[]
+  BlockedCountries       String[]
+  AllowedIps             String[]
+  OnetimeUse             Boolean?  @default(false)
+  ShowPoweredByUrlcut    Boolean?  @default(true)
+  InstantRedirect        Boolean?  @default(false)
+  MetaTags               String[]
+  BlockAndroid           Boolean?  @default(false)
+  BlockIOS               Boolean?  @default(false)
+  BlockPC                Boolean?  @default(false)
+  ButtonName             String?   @default("")
 }
 
-model Captcha {
-  id        String  @id @map("_id")
-  isEnabled Boolean @default(false)
-  role      String
-  guild     Guild   @relation(fields: [id], references: [id])
+model User {
+  id                    Int       @id @default(autoincrement())
+  email                 String?   @unique
+  username              String?
+  FirstName             String?
+  LastName              String?
+  subscriptionId        String?   @unique
+  type                  String?   @default("Email/Username and Password")
+  PublicProfileDomain   String?   @default("urlcut.click")
+  PublicProfile         Boolean?  @default(false)
+  enterpise             Boolean?  @default(false)
+  about                 String?
+  publiclinks           String[]
+  Badges                String[]
+  password              String?
+  premium               Boolean?  @default(false)
+  links                 Int[]
+  banned                Boolean?  @default(false)
+  bannedLength          String?   @default("Not specified!")
+  unbanDate             DateTime?
+  twoFactorEnabled      Boolean?  @default(false)
+  twoFactorSecret       String?
+  tempAuthCode          String?
+  verified              Boolean?  @default(false)
+  CompleteOnBoard       Boolean?  @default(false)
+  InfoChanageble        Boolean?  @default(false)
+  verification          Int?
+  bannedReason          String?   @default("Not specified!")
+  pfp                   String?   @default("https://cdn2.urlcut.app/file/placeholder.svg")
+  isActivated           Boolean   @default(false)
+  teams                 String[]
+  invited               String[]
+  verifycode            String?
+  publicProfileVerified Boolean?  @default(false)
+  activateToken         String?
+  activateTokenExpires  DateTime?
+  sessions              String[]
+  EmailNotifications    Boolean?  @default(true)
+  BetaTester            Boolean?  @default(false)
+  PublicProfileTheme    String?   @default("purple-dark")
+  instagram String?
+  facebook String?
+  x String?
+  github String?
+  linkedin String?
+  youtube String?
+  twitch String?
+  tiktok String?
+  discord String?
+  reddit String?
+  steam String?
+  spotify String?
+  pinterest String?
+  tinder String?
+}
+
+model Billing {
+  id     Int  @id @default(autoincrement())
+  UserID Int?
+}
+
+model PendingDeletions {
+  id                  Int       @id @default(autoincrement())
+  UserID              Int?
+  PendingDeletionTime DateTime?
+}
+
+model Business {
+  id             Int      @id @default(autoincrement())
+  BusinessName   String?  @unique
+  BusinessEmail  String?  @unique
+  InVerification Boolean? @default(true)
+  BusinessDomain String?  @unique
+  verificationId String?  @unique
+  UserID         Int?
+}
+
+model PublicProfile {
+  id              Int      @id @default(autoincrement())
+  aboutMe         String?
+  publicLinks     String[]
+  badges          String[]
+  backgroundcolor String?  @default("#000000")
+  backgroundurl   String?
+  domain          String?  @default("urlcut.click")
+  UserID          Int?
+  enabled         Boolean? @default(false)
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  useragent String?
+  ip        String?
+  createdAt DateTime @default(now())
+  UserID    Int?
+}
+
+model ApiKey {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  key         String?   @unique
+  createdAt   DateTime? @default(now())
+  suspended   Boolean?  @default(false)
+  credits     Int?      @default(0)
+  developerId Int?
+  RequestsMade Int[] @default([0,0,0,0,0,0,0])
+  CreatedLinks Int[] @default([0,0,0,0,0,0,0])
+  ErrorsMade Int[] @default([0,0,0,0,0,0,0])
+  RatelimitHit Int[] @default([0,0,0,0,0,0,0])
+  PendingDeletion Boolean? @default(false)
+  links       Int[] @default([])
+}
+
+model DeveloperProfile {
+  id        Int       @id @default(autoincrement())
+  email     String?   @unique
+  username  String?
+  password  String?
+  createdAt DateTime? @default(now())
+  pfp       String?
+}
+
+model CustomDomainsLinked {
+  id         Int       @id @default(autoincrement())
+  domain     String?
+  LinkedOn   DateTime? @default(now())
+  UserID     Int?
+  configured Boolean?  @default(false)
+  type       String?   @default("CNAME")
+}
+
+model customMetaTagData {
+  id          Int     @id @default(autoincrement())
+  title       String?
+  description String?
+  color       String?
+  LinkID      String?
+}
+
+model Contact {
+  id        Int       @id @default(autoincrement())
+  email     String?
+  name      String?
+  message   String?
+  issue     String?
+  createdAt DateTime? @default(now())
+}
+
+model Team {
+  id                              Int       @id @default(autoincrement())
+  name                            String?
+  members                         String[]
+  owner                           Int?
+  createdAt                       DateTime? @default(now())
+  premium                         Boolean?  @default(false)
+  enterprise                      Boolean?  @default(false)
+  MonthlyCreatedLinks             Int?      @default(0)
+  MonthlyCreatedLinksLimit        Int?      @default(100)
+  MonthlyCreatedLinksLimitReached Boolean?  @default(false)
+  MembersLimit                    Int?      @default(5)
+  MembersLimitReached             Boolean?  @default(false)
+}
+
+enum Plans {
+  free
+  premium
+  teenpremium
 }

@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "path": "../../.."
+    },
+    {
+      "path": "../../../../respond-bot"
+    },
+    {
+      "path": "../../../../Main site/urlcut-rr-2"
+    },
+    {
+      "path": "../../../../developerapi"
+    },
+    {
+      "path": "../../../../../Urlcut Profiles"
+    },
+    {
+      "path": "../../../../../urlcut-links-master/urlcut-links-master"
+    },
+    {
+      "path": "../../../../UrlcutAdSense"
+    },
+    {
+      "path": "../../../../../urlcutdevportal-main/urlcutdevportal-main"
+    }
+  ],
+  "settings": {
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
+  }
+}
